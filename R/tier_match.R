@@ -143,7 +143,7 @@ tier_match <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL, suffix
     }
     # clean the by's
 
-    if (clean == TRUE & length(tier_settings[["by.x"]]) == 1) {
+    if (tier_settings[["clean"]] == TRUE & length(tier_settings[["by.x"]]) == 1) {
       data1[[tier_settings[["by.x"]]]] <- do.call(clean_strings, c(list(string = data1[[tier_settings[["by.x"]]]]), tier_settings[["clean_settings"]]))
       data2[[tier_settings[["by.y"]]]] <- do.call(clean_strings, c(list(string = data2[[tier_settings[["by.y"]]]]), tier_settings[["clean_settings"]]))
     }
@@ -189,7 +189,7 @@ tier_match <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL, suffix
       } else {
         matches <- rbind(matches, newmatches, fill = TRUE)
       }
-      if (takeout %in% c("data2", "both")) {
+      if (takeout == c("data2")) {
         if (is.null(data2_keys_remove)) {
           data2_keys_remove <- data.table(a = tier_result[["matches"]][[unique_key_2]])
           setnames(data2_keys_remove, unique_key_2)
@@ -198,18 +198,35 @@ tier_match <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL, suffix
           setnames(data2_keys_remove_new, unique_key_2)
           data2_keys_remove <- rbind(data2_keys_remove, data2_keys_remove_new)
         }
-      }
-      if (takeout %in% c("data1", "both")) {
+      } else if (takeout == c("data1")) {
         if (is.null(data1_keys_remove)) {
           data1_keys_remove <- data.table(a = tier_result[["matches"]][[unique_key_1]])
           setnames(data1_keys_remove, unique_key_1)
-        } else if (takeout == "neither") {
+        } else {
           data1_keys_remove_new <- data.table(a = tier_result[["matches"]][[unique_key_1]])
           setnames(data1_keys_remove_new, unique_key_1)
           data1_keys_remove <- rbind(data1_keys_remove, data1_keys_remove_new)
-        } else {
-          stop("'takeout' must be one of 'data1', 'data2', 'both', or 'neither'.")
         }
+      } else if (takeout == "both") {
+        if (is.null(data1_keys_remove)) {
+          data1_keys_remove <- data.table(a = tier_result[["matches"]][[unique_key_1]])
+          setnames(data1_keys_remove, unique_key_1)
+        } else {
+          data1_keys_remove_new <- data.table(a = tier_result[["matches"]][[unique_key_1]])
+          setnames(data1_keys_remove_new, unique_key_1)
+          data1_keys_remove <- rbind(data1_keys_remove, data1_keys_remove_new)
+        }
+        if (is.null(data2_keys_remove)) {
+          data2_keys_remove <- data.table(a = tier_result[["matches"]][[unique_key_2]])
+          setnames(data2_keys_remove, unique_key_2)
+        } else {
+          data2_keys_remove_new <- data.table(a = tier_result[["matches"]][[unique_key_2]])
+          setnames(data2_keys_remove_new, unique_key_2)
+          data2_keys_remove <- rbind(data2_keys_remove, data2_keys_remove_new)
+        }
+      } else if (takeout == "neither") {
+      } else {
+        stop("'takeout' must be one of 'data1', 'data2', 'both', or 'neither'.")
       }
     }
     if (verbose == TRUE) {
@@ -220,9 +237,6 @@ tier_match <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL, suffix
       message("Time elapsed: ", diff_num, " ", diff_units, ".")
     }
   } # close off tier loop
-
-
-
   ## evaluating
   if (is.null(matches)) {
     match_evaluation <- NULL

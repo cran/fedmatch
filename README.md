@@ -3,6 +3,13 @@
 
 # fedmatch
 
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/fedmatch)](https://CRAN.R-project.org/package=fedmatch)
+[![R-CMD-check](https://github.com/seunglee98/fedmatch/workflows/R-CMD-check/badge.svg)](https://github.com/seunglee98/fedmatch/actions)
+<!-- badges: end -->
+
 The goal of fedmatch is to match un-linked datasets. It provides a
 variety of tools that allow a user to build a custom matching algorithm
 for their specific application. To get started, see the “Introduction to
@@ -45,10 +52,3 @@ Sicilian (2018). “The U.S. Syndicated Loan Market: Matching Data,”
 Finance and Economics Discussion Series 2018-085. Washington: Board of
 Governors of the Federal Reserve System,
 <https://doi.org/10.17016/FEDS.2018.085>.
-
-# Contacts
-
--   <melanie.r.friedrichs@gmail.com>
--   <blake.marsh@kc.frb.org>
--   <seung.j.lee@frb.gov>
--   <chris.webster@frb.gov>

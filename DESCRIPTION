@@ -1,6 +1,6 @@
 Package: fedmatch
 Title: Fast, Flexible, and User-Friendly Record Linkage Methods
-Version: 2.0.0
+Version: 2.0.2
 Authors@R: c(person("Melanie", "Friedrichs", email = "melanie.r.friedrichs@gmail.com", role = c("aut")),
              person("Chris", "Webster", email = "chris0webster@gmail.com", role = c("aut", "cre")),
              person("Blake", "Marsh", email = "blake.marsh@kc.frb.org", role = c("aut")),
@@ -13,14 +13,14 @@ Depends: R (>= 4.0.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: stringdist, SnowballC, gtools, stringr, purrr, Rcpp, parallel,
+Imports: stringdist, SnowballC, stringr, purrr, Rcpp, parallel,
         forcats, data.table, magrittr, scales
 RoxygenNote: 7.1.1
 Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
-LinkingTo: Rcpp, BH
+LinkingTo: Rcpp, BH (>= 1.75.0)
 NeedsCompilation: yes
-Packaged: 2021-07-19 14:26:46 UTC; cwebster
+Packaged: 2021-08-03 19:55:47 UTC; cwebster
 Author: Melanie Friedrichs [aut],
   Chris Webster [aut, cre],
   Blake Marsh [aut],
@@ -28,4 +28,4 @@ Author: Melanie Friedrichs [aut],
   Seung Lee [aut]
 Maintainer: Chris Webster <chris0webster@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-07-20 08:40:02 UTC
+Date/Publication: 2021-08-04 00:40:13 UTC

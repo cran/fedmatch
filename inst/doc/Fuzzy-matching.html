@@ -148,7 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="fuzzy-matching-theory" class="section level1">
 <h1>Fuzzy matching theory</h1>
-<p>The basic idea behind fuzzy matching is to compute a numerical ‘distance’ between every potential string comparison, and then for each string in data set 1, pick the ‘closest’ string in data set 2. One can also specify a threshold such that every match is of a certain quality. The concept of ‘distance’ can be defined in several methods, explained below. Each method will define a similarity <span class="math inline">\(s\)</span> <span class="math inline">\(0 \\leq s \\leq 1\)</span> , such that higher values will mean the strings are more similar, and a corresponding distance <span class="math inline">\(d = 1 - s\)</span>.</p>
+<p>The basic idea behind fuzzy matching is to compute a numerical ‘distance’ between every potential string comparison, and then for each string in data set 1, pick the ‘closest’ string in data set 2. One can also specify a threshold such that every match is of a certain quality. The concept of ‘distance’ can be defined in several methods, explained below. Each method will define a similarity <span class="math inline">\(s\)</span>, <span class="math inline">\(0 \leq s \leq 1\)</span> , such that higher values will mean the strings are more similar, and a corresponding distance <span class="math inline">\(d = 1 - s\)</span>.</p>
 <div id="jaro-winkler" class="section level2">
 <h2>Jaro-Winkler</h2>
 <p>The most common method of matching strings with <code>fedmatch</code> uses the Jaro-Winkler string distance. The Jaro similarity is defined as</p>
@@ -201,15 +201,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>matchNA, default <code>FALSE</code>, is a boolean to determine whether to count NAs as a match (see <code>stringdist::amatch</code> for details.)</li>
 <li>nthread, number of threads to use in the underlying C code. If using any method besides “wgt_jaccard”, uses `stringdist::amatch’ to parallelize. If using “wgt_jaccard”, instead uses built in C++ code to parallelize.</li>
 </ul>
-<div id="an-important-technical-note" class="section level3">
-<h3>An important technical note</h3>
-<p>To get the Weighted Jaccard method to run quickly, you need to ensure that R is configured to use multiple threads in conjunction with C++. On linux, this can be done by making a file called ‘Makevars’ (no file extension) in ~/.R/ , with the following two lines of text:</p>
-<ul>
-<li>PKG_CXXFLAGS = “-fopenmp”</li>
-<li>PKG_LIBS = “-fopenmp”</li>
-</ul>
-<p>These flags ensure that your C++ is set up to use the OpenMP libraries required to use multiple threads (I think - I am not actually an expert here. Lots of Googling is your friend.) On Windows, the process may be more difficult. See the <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Customizing-package-compilation">here</a> and <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#OpenMP-support">here</a> for more documentation. If, for some reason, you can’t get this to work, rest assured that the Weighted Jaccard match will still run just fine, it just may take a long time for large data sets.</p>
-</div>
 </div>
 <div id="an-example---weighted-jaccard-match" class="section level2">
 <h2>An example - weighted Jaccard match</h2>
