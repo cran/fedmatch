@@ -10,12 +10,29 @@ status](https://www.r-pkg.org/badges/version/fedmatch)](https://CRAN.R-project.o
 [![R-CMD-check](https://github.com/seunglee98/fedmatch/workflows/R-CMD-check/badge.svg)](https://github.com/seunglee98/fedmatch/actions)
 <!-- badges: end -->
 
+*Any views expressed here do not reflect those of the Federal Reserve
+Board or Federal Reserve System.*
+
 The goal of fedmatch is to match un-linked datasets. It provides a
 variety of tools that allow a user to build a custom matching algorithm
-for their specific application. To get started, see the “Introduction to
-Fedmatch” vignette by installing fedmatch and running
-`vignette("Intro-to-fedmatch")`. For more advanced uses, see the rest of
-the vignettes by running `vignette(package = "fedmatch")`.
+for their specific application. To get started, see the [“Introduction
+to fedmatch”
+vignette](https://seunglee98.github.io/fedmatch/articles/Intro-to-fedmatch.html).
+
+You can view all the vignettes, and the rest of the documentation, on
+the [fedmatch website](https://seunglee98.github.io/fedmatch/).
+
+## Features
+
+-   String cleaning tools
+-   Fuzzy matching with standard string distance metrics from the
+    package `stringdist`
+-   A new fuzzy matching method which we call a *Weighted Jaccard*
+    metric
+-   Numeric matching using a trained logit model
+-   A system to sequentially execute many different types of match
+    algorithms
+-   A system for evaluating matches post-hoc
 
 # Installation
 
@@ -46,9 +63,7 @@ LICENSE.md file for details.
 If you use this package for your research, please cite the technical
 paper:
 
-Cohen, Gregory J., Melanie Friedrichs, Kamran Gupta, William Hayes,
-Seung Jung Lee, W. Blake Marsh, Nathan Mislang, Maya Shaton, and Martin
-Sicilian (2018). “The U.S. Syndicated Loan Market: Matching Data,”
-Finance and Economics Discussion Series 2018-085. Washington: Board of
-Governors of the Federal Reserve System,
-<https://doi.org/10.17016/FEDS.2018.085>.
+Gregory J. Cohen, Jacob Dice, Melanie Friedrichs, Kamran Gupta, William
+Hayes, Isabel Kitschelt, Seung Jung Lee, W. Blake Marsh, Nathan Mislang,
+Maya Shaton, Martin Sicilian, Chris Webster. “The U.S. Syndicated Loan
+Market: Matching Data.” Journal of Financial Research, forthcoming.

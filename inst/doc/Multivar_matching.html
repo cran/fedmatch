@@ -147,7 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code></pre></div>
 <div id="background" class="section level1">
 <h1>Background</h1>
-<p>While name matching is covered well by the tools in<code>fedmatch::merge_plus()</code> and <code>fedmatch::fuzzy_match()</code>, sometimes it is useful to pull in additional information besides names. These could include company information fields like industry code, zip codes, countries, and the like. Or, for loans, it could include loan amounts, origination dates, or industry codes. Or, one could even want to use multiple different names at the same time. This is where <code>fedmatch::multivar_match()</code> comes into play. It lets you compare two records based on multiple fields. It does so by assigning a numeric value from 0-1 for each field, and then computing a weighted sum (or predicts a probability with a logit model), arriving at a final matchscore for a given pair of records. It computes these matchscores for every possible combination of records, and picks the best match for each</p>
+<p>While name matching is covered well by the tools in<code>fedmatch::merge_plus()</code> and <code>fedmatch::fuzzy_match()</code>, sometimes it is useful to pull in additional information besides names. These could include company information fields like industry code, zip codes, countries, and the like. Or, for loans, it could include loan amounts, origination dates, or industry codes. Or, one could even want to use multiple different names at the same time. This is where <code>fedmatch::multivar_match()</code> comes into play. It lets you compare two records based on multiple fields. It does so by assigning a numeric value from 0-1 for each field, and then computing a weighted sum (or predicts a probability with a logit model), arriving at a final multivar_score for a given pair of records. It computes these multivar_scores for every possible combination of records, and picks the best match for each</p>
 </div>
 <div id="syntax" class="section level1">
 <h1>Syntax</h1>
@@ -202,17 +202,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:             AT &amp; T     USA         TN     4000  160,000            9    9</span></span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:         Ford Motor     USA         MI     2222  150,000           10   10</span></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:         Ford Motor     USA         MI     2222  150,000           10   10</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Country_2          Company_2 Country_compare Company_compare matchscore</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       USA            Walmart               1       1.0000000  1.0000000</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       USA  Bershire Hathaway               1       0.9882353  0.9941176</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       USA     Apple Computer               1       0.8714286  0.9357143</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       USA Exxon Mobile Inc.                1       0.9333333  0.9666667</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:               McKesson Corp.               0       0.9285714  0.4642857</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       USA UnitedHealth Group               1       1.0000000  1.0000000</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       USA UnitedHealth Group               1       0.5333333  0.7666667</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       USA             AT &amp; T               1       0.9111111  0.9555556</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       USA         Ford Motor               1       0.7333333  0.8666667</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       USA         Ford Motor               1       0.9111111  0.9555556</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Country_2          Company_2 Country_compare Company_compare multivar_score</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       USA            Walmart               1       1.0000000      1.0000000</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       USA  Bershire Hathaway               1       0.9882353      0.9941176</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       USA     Apple Computer               1       0.8714286      0.9357143</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       USA Exxon Mobile Inc.                1       0.9333333      0.9666667</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:               McKesson Corp.               0       0.9285714      0.4642857</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       USA UnitedHealth Group               1       1.0000000      1.0000000</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       USA UnitedHealth Group               1       0.5333333      0.7666667</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       USA             AT &amp; T               1       0.9111111      0.9555556</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       USA         Ford Motor               1       0.7333333      0.8666667</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       USA         Ford Motor               1       0.9111111      0.9555556</span></span>
 <span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     tier</span></span>
 <span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:  all</span></span>
 <span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:  all</span></span>
@@ -252,9 +252,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>“ratio” computes the ratio between the two columns, always such that the ratio is less than 1</li>
 <li>“stringdist” computes the Jaro-Winkler string distance between the strings.</li>
 </ul></li>
-<li>‘wgts’ is a vector of weights, length equal to the length of the ‘by’ vector, that describes how to weight each field for computing a matchscore.</li>
+<li>‘wgts’ is a vector of weights, length equal to the length of the ‘by’ vector, that describes how to weight each field for computing a multivar_score.</li>
 <li>‘nthread’ is how many threads to use when making the comparisons, see <code>parallel::makeCluster()</code></li>
-<li>‘logit’ is a logit model (described in detail later) that can be used instead of ‘wgts’ to combine the comparison scores into a final matchscore using <code>base::predict()</code></li>
+<li>‘logit’ is a logit model (described in detail later) that can be used instead of ‘wgts’ to combine the comparison scores into a final multivar_score using <code>base::predict()</code></li>
 </ul>
 </div>
 <div id="return-value" class="section level1">
@@ -284,20 +284,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       USA       USA               1</span></span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       USA       USA               1</span></span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       USA       USA               1</span></span></code></pre></div>
-<p>Further, it adds one additional column for the overall matchscore. In our example, we set the weights each equal to 0.5, so the matchscore is simply the average of our two comparison variables:</p>
+<p>Further, it adds one additional column for the overall multivar_score. In our example, we set the weights each equal to 0.5, so the multivar_score is simply the average of our two comparison variables:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result<span class="sc">$</span>matches[, .(Company_compare, Country_compare, matchscore)])</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Company_compare Country_compare matchscore</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       1.0000000               1  1.0000000</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       0.9882353               1  0.9941176</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       0.8714286               1  0.9357143</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       0.9333333               1  0.9666667</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:       0.9285714               0  0.4642857</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       1.0000000               1  1.0000000</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       0.5333333               1  0.7666667</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       0.9111111               1  0.9555556</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       0.7333333               1  0.8666667</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       0.9111111               1  0.9555556</span></span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result<span class="sc">$</span>matches[, .(Company_compare, Country_compare, multivar_score)])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Company_compare Country_compare multivar_score</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       1.0000000               1      1.0000000</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       0.9882353               1      0.9941176</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       0.8714286               1      0.9357143</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       0.9333333               1      0.9666667</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:       0.9285714               0      0.4642857</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       1.0000000               1      1.0000000</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       0.5333333               1      0.7666667</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       0.9111111               1      0.9555556</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       0.7333333               1      0.8666667</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       0.9111111               1      0.9555556</span></span></code></pre></div>
 </div>
 <div id="calculating-weights-from-a-training-set" class="section level1">
 <h1>Calculating weights from a training set</h1>
@@ -400,17 +400,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:             AT &amp; T     USA         TN     4000  160,000            9    9</span></span>
 <span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:             AT &amp; T     USA         TN     4000  160,000            9    9</span></span>
 <span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:         Ford Motor     USA         MI     2222  150,000           10   10</span></span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Country_2          Company_2 Country_compare Company_compare matchscore</span></span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       USA            Walmart               1       0.0000000  0.6734819</span></span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       USA            Walmart               0       0.0000000  0.6665064</span></span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       USA            Walmart               1       0.3650794  0.6713026</span></span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       USA            Walmart               1       0.0000000  0.6734819</span></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:       USA Exxon Mobile Inc.                1       0.2847222  0.6717829</span></span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       USA Exxon Mobile Inc.                1       0.3777778  0.6712266</span></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       USA UnitedHealth Group               1       0.4497354  0.6707962</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       USA             AT &amp; T               1       0.0000000  0.6734819</span></span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       USA             AT &amp; T               1       0.4126984  0.6710178</span></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       USA         Ford Motor               1       0.0000000  0.6734819</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Country_2          Company_2 Country_compare Company_compare multivar_score</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       USA            Walmart               1       0.0000000      0.6734819</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:       USA            Walmart               0       0.0000000      0.6665064</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       USA            Walmart               1       0.3650794      0.6713026</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4:       USA            Walmart               1       0.0000000      0.6734819</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5:       USA Exxon Mobile Inc.                1       0.2847222      0.6717829</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6:       USA Exxon Mobile Inc.                1       0.3777778      0.6712266</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7:       USA UnitedHealth Group               1       0.4497354      0.6707962</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8:       USA             AT &amp; T               1       0.0000000      0.6734819</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9:       USA             AT &amp; T               1       0.4126984      0.6710178</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       USA         Ford Motor               1       0.0000000      0.6734819</span></span>
 <span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     tier</span></span>
 <span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:  all</span></span>
 <span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:  all</span></span>
@@ -448,8 +448,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  all      10               10                5             1           0.5</span></span>
 <span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    new_unique_1 new_unique_2</span></span>
 <span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:           10            5</span></span></code></pre></div>
-<p>Instead of using a weighted sum of comparison scores, we use <code>base::predict</code> to arrive at a matchscore that can be interpreted as a match probability. A word of caution: the logit parameters can give very non-intuitive results for the resultant matchscores, because the <a href="https://en.wikipedia.org/wiki/Logit">logit function</a> is of course non-linear. For example, in one project we were working on, there was a coefficient of 40 and a coefficient of 3. However, if the variable with the coefficient of ‘3’ had a comparison score of 0, then the highest the matchscore could be was only around 0.6! This was very unintuitive for us, and shows the complex nature of the logit model.</p>
-<p>All that said, the logit model has the benefit of returning an easily-interpretable matchscore: with a large enough (and clean enough) training set, the fitted matchscore is simply the probability of a match. This is contrast to the matchscores returned by the linear combination: these numbers have no immediate meaning, and can vary dramatically for each project. In one project, a score of .6 might be very good, and in another, very bad. It is a good idea to try both the logit and linear methods and play around with each for your individual project.</p>
+<p>Instead of using a weighted sum of comparison scores, we use <code>base::predict</code> to arrive at a multivar_score that can be interpreted as a match probability. A word of caution: the logit parameters can give very non-intuitive results for the resultant multivar_scores, because the <a href="https://en.wikipedia.org/wiki/Logit">logit function</a> is of course non-linear. For example, in one project we were working on, there was a coefficient of 40 and a coefficient of 3. However, if the variable with the coefficient of ‘3’ had a comparison score of 0, then the highest the multivar_score could be was only around 0.6! This was very unintuitive for us, and shows the complex nature of the logit model.</p>
+<p>All that said, the logit model has the benefit of returning an easily-interpretable multivar_score: with a large enough (and clean enough) training set, the fitted multivar_score is simply the probability of a match. This is contrast to the multivar_scores returned by the linear combination: these numbers have no immediate meaning, and can vary dramatically for each project. In one project, a score of .6 might be very good, and in another, very bad. It is a good idea to try both the logit and linear methods and play around with each for your individual project.</p>
 </div>
 <div id="parallelization-and-saving-time" class="section level1">
 <h1>Parallelization and saving time</h1>
@@ -502,16 +502,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7:             AT &amp; T     USA         TN     4000  160,000            9    9</span></span>
 <span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8:         Ford Motor     USA         MI     2222  150,000           10   10</span></span>
 <span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9:         Ford Motor     USA         MI     2222  150,000           10   10</span></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Company_2 Company_compare matchscore tier</span></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            Walmart       1.0000000  1.0000000  all</span></span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:  Bershire Hathaway       0.9882353  0.9882353  all</span></span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:     Apple Computer       0.8714286  0.8714286  all</span></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4: Exxon Mobile Inc.        0.9333333  0.9333333  all</span></span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5: UnitedHealth Group       1.0000000  1.0000000  all</span></span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6: UnitedHealth Group       0.5333333  0.5333333  all</span></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7:             AT &amp; T       0.9111111  0.9111111  all</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8:         Ford Motor       0.7333333  0.7333333  all</span></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9:         Ford Motor       0.9111111  0.9111111  all</span></span></code></pre></div>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Company_2 Company_compare multivar_score tier</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            Walmart       1.0000000      1.0000000  all</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:  Bershire Hathaway       0.9882353      0.9882353  all</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:     Apple Computer       0.8714286      0.8714286  all</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4: Exxon Mobile Inc.        0.9333333      0.9333333  all</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5: UnitedHealth Group       1.0000000      1.0000000  all</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6: UnitedHealth Group       0.5333333      0.5333333  all</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7:             AT &amp; T       0.9111111      0.9111111  all</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8:         Ford Motor       0.7333333      0.7333333  all</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9:         Ford Motor       0.9111111      0.9111111  all</span></span></code></pre></div>
 <p>For our dummy example data, this isn’t that useful (we just drop one observation with the Country being Germany). But, if there is a field in the data that is well-populated and trusted, it can be used to dramatically cut down on the number of observations.</p>
 <p>Parallelization is implemented with the <code>nthread</code> argument and <code>parallel::parLapply()</code>. The data is split into groups equal to <code>nthread</code>, and then each core does its comparison, all at the same time. This of course can dramatically speed up the process, but requires more memory and computing power. For details on the parallel process, see <code>parallel::parLapply</code> and <code>parallel::makeCluster</code>.</p>
 </div>

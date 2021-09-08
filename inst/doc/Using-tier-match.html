@@ -186,7 +186,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">score_type =</span> <span class="st">&quot;stringdist&quot;</span>)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matching tier &#39;a&#39;...</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time elapsed: 0.02 secs.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time elapsed: 0.01 secs.</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matching tier &#39;b&#39;...</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time elapsed: 0.02 secs.</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matching tier &#39;c&#39;...</span></span>
@@ -212,12 +212,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:     3380  490,000            1           Walmart  1.0000000     1.0000000</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:     2220  220,000            2 Bershire Hathaway  0.9882353     0.9882353</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:       NA  220,000            3    apple computer  0.8714286     0.8714286</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    tier wgt_jaccard_sim Company_compare</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    a              NA              NA</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:    b       1.0000000              NA</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:    c              NA       1.0000000</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:    c              NA       0.9882353</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:    b       0.3333333              NA</span></span></code></pre></div>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    tier wgt_jaccard_sim Company_compare multivar_score</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    a              NA              NA             NA</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:    b       1.0000000              NA             NA</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:    c              NA       1.0000000      1.0000000</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:    c              NA       0.9882353      0.9882353</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:    b       0.3333333              NA             NA</span></span></code></pre></div>
 <p>As you can see, the matches dataset has a column called ‘tier’ that indicates which tier the match was from. It also adds any additional columns added by the matching process. In this example, we see ‘Company_score’, created from the from the post-hoc scoring; ‘wgt_jaccard_sim’, the Weighted Jaccard similarity, created when using the ‘wgt_jaccard’ setting of <code>fuzzy_match</code> (see the ‘Fuzzy-matching’ vignette for more details); and ‘Company_compare’, created from the multivar matching tier.</p>
 <p>We also have a match evaluation, now filled out with more details broken down by tier:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>match_evaluation</span>
