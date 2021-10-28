@@ -36,7 +36,7 @@
 #'   to filter.
 #' @param filter.args list. Arguments passed to filter, if a function
 #' @param evaluate Function to evalute merge_plus output.
-#' @param evaluate.args ist. Arguments passed to evaluate
+#' @param evaluate.args list. Arguments passed to evaluate
 #' @param allow.cartesian whether or not to allow many-many matches, see data.table::merge()
 #' @return list with matches, filtered matches (if applicable), data1 and data2
 #'   minus matches, and match evaluation
@@ -97,8 +97,27 @@ merge_plus <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL,
   }
 
   if (match_type == "exact") {
+
     if (length(by.x) > 1 | length(by.y) > 1 | length(by) > 1) {
       stop("For exact matching, 'by'(or 'by.x', and 'by.y') must be length-1 character vectors. If desired, try combining columns with paste0.")
+    }
+    if (any(is.na(data1[[by.x]]))) {
+      n_init <- data1[, .N]
+      data1_nas <- data1[is.na(get(by.x))]
+      data1 <- data1[!is.na(get(by.x))]
+      n_final <- data1[, .N]
+      message(stringr::str_c("Removing ",n_init - n_final," NA observations in by.x. These will be re-inserted for subsequent tiers."))
+    } else {
+      data1_nas <- NULL
+    }
+    if (any(is.na(data2[[by.y]]))) {
+      n_init <- data2[, .N]
+      data2_nas <- data2[is.na(get(by.y))]
+      data2 <- data2[!is.na(get(by.y))]
+      n_final <- data2[, .N]
+      message(stringr::str_c("Removing ",n_init - n_final," NA observations in by.y. These will be re-inserted for subsequent tiers."))
+    } else {
+      data2_nas <- NULL
     }
     matches <- merge(data1, data2,
       by.x = by.x,
@@ -115,6 +134,24 @@ merge_plus <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL,
     if (length(by.x) > 1 | length(by.y) > 1 | length(by) > 1) {
       stop("For fuzzy matching, 'by'(or 'by.x', and 'by.y') must be length-1 character vectors. If desired, try combining columns with paste0.")
     }
+    if (any(is.na(data1[[by.x]]))) {
+      n_init <- data1[, .N]
+      data1_nas <- data1[is.na(get(by.x))]
+      data1 <- data1[!is.na(get(by.x))]
+      n_final <- data1[, .N]
+      message(stringr::str_c("Removing ",n_init - n_final," NA observations in by.x. These will be re-inserted for subsequent tiers."))
+    } else {
+      data1_nas <- NULL
+    }
+    if (any(is.na(data2[[by.y]]))) {
+      n_init <- data2[, .N]
+      data2_nas <- data2[is.na(get(by.y))]
+      data2 <- data2[!is.na(get(by.y))]
+      n_final <- data2[, .N]
+      message(stringr::str_c("Removing ",n_init - n_final," NA observations in by.y. These will be re-inserted for subsequent tiers."))
+    } else {
+      data2_nas <- NULL
+    }
     matches <- fuzzy_match(data1, data2,
       by.x = by.x, by.y = by.y, suffixes = suffixes,
       unique_key_1 = unique_key_1, unique_key_2 = unique_key_2,
@@ -130,6 +167,8 @@ merge_plus <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL,
       multivar_settings
     )
     matches <- do.call(multivar_match, multivar_settings)
+    data1_nas <- NULL
+    data2_nas <- NULL
   }
 
   ## checking matches
@@ -137,8 +176,8 @@ merge_plus <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL,
     message(paste("Merge returned no matches"))
     matches <- NULL
     matches_filter <- NULL
-    data1_nomatch <- data1
-    data2_nomatch <- data2
+    data1_nomatch <- rbind(data1, data1_nas, fill = T)
+    data2_nomatch <- rbind(data2, data2_nas, fill = T)
     match_evaluation <- NULL
   } else { # this bracket is closed after #Evaluate
 
@@ -146,11 +185,12 @@ merge_plus <- function(data1, data2, by = NULL, by.x = NULL, by.y = NULL,
     setkeyv(data1, unique_key_1)
     setkeyv(matches, c(unique_key_1))
     data1_nomatch <- data1[!matches]
+    data1_nomatch <- rbind(data1_nomatch, data1_nas, fill = T)
     # use DT's anti-join syntax
     setkeyv(data2, unique_key_2)
     setkeyv(matches, c(unique_key_2))
     data2_nomatch <- data2[!matches]
-
+    data2_nomatch <- rbind(data2_nomatch, data2_nas, fill = T)
     if (!is.null(score_settings)) {
       if (!is.null(score_settings[["score_var_both"]])) {
         score.x <- score_settings[["score_var_both"]]
