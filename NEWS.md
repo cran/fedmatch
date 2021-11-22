@@ -1,3 +1,10 @@
+# fedmatch 2.0.5
+- Fixed bug in `build_tier_settings` that didn't include `sequential_words` argument
+- Fixed bug where `clean_strings` wasn't removing the replacement words even if `remove_words == T`
+- Fixed bug where `tier_match` didn't work in some cases with `fuzzy_match`
+- Now exporting `build_corpus` to easily compute `wgt_jaccard_distance`
+- Added weighted jaccard distance option to `compare_type` in multivar matching
+
 # fedmatch 2.0.4
 - Added `wgt_jaccard_distance` to easily compute Weighted Jaccard Distances for two string vectors
 - Lowered R requirement to 3.5.3

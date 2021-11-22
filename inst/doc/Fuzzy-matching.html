@@ -141,7 +141,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fedmatch)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fedmatch)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code></pre></div>
 <div id="intro" class="section level1">
 <h1>Intro</h1>
 <p>Fuzzy matching is an essential part of the matching process. After trying all the name cleaning that you can with <code>clean_strings</code>, you have gotten the ‘low hanging fruit’ of your match, and now you need to move on to non-exact matches. <code>merge_plus</code> has a built-in setting for this called ‘fuzzy’ matching. It lets you match on strings that are similar, but not exactly the same.</p>
@@ -205,58 +206,86 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>nthread, number of threads to use in the underlying C code. If using any method besides “wgt_jaccard”, uses `stringdist::amatch’ to parallelize. If using “wgt_jaccard”, instead uses built in C++ code to parallelize.</li>
 </ul>
 </div>
+<div id="the-order-of-which-is-data1-and-which-is-data2-matters" class="section level2">
+<h2>The order of which is data1 and which is data2 matters!</h2>
+<p>The behavior of <code>fuzzy_match</code> is such that you can get different results from swapping data1 and data2. This is because <code>fuzzy_match</code> answers the question: “for each observation in data1, which observation is closest in data2 (while being closest than the maxDist)?” This can result in duplicate observations from data2, as shown in the simple example below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dummy_data1 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">id1 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">name =</span> <span class="st">&quot;abd&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dummy_data2 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">id2 =</span> <span class="dv">1</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">name =</span> <span class="st">&quot;abc&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> fedmatch<span class="sc">::</span><span class="fu">merge_plus</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data1 =</span> dummy_data1,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data2 =</span> dummy_data2, <span class="at">by.x =</span> <span class="st">&quot;name&quot;</span>, <span class="at">by.y =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">unique_key_1 =</span> <span class="st">&quot;id1&quot;</span>, <span class="at">unique_key_2 =</span> <span class="st">&quot;id2&quot;</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">suffixes =</span> <span class="fu">c</span>(<span class="st">&quot;_1&quot;</span>, <span class="st">&quot;_2&quot;</span>), <span class="at">fuzzy_settings =</span> <span class="fu">build_fuzzy_settings</span>(<span class="at">maxDist =</span> .<span class="dv">5</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result1<span class="sc">$</span>matches)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id2 id1 name_1 name_2 tier</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:   1   1    abd    abc  all</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:   1   2    abd    abc  all</span></span></code></pre></div>
+<p>Note how we have two observations of the id2 ‘1’, because each of these observations is the closest in the data to the observations in data1 (and they are closer together than the maxDist specified). Now, if we flip the datasets:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> fedmatch<span class="sc">::</span><span class="fu">merge_plus</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data1 =</span> dummy_data2,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">data2 =</span> dummy_data1, <span class="at">by.x =</span> <span class="st">&quot;name&quot;</span>, <span class="at">by.y =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">unique_key_1 =</span> <span class="st">&quot;id2&quot;</span>, <span class="at">unique_key_2 =</span> <span class="st">&quot;id1&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">suffixes =</span> <span class="fu">c</span>(<span class="st">&quot;_1&quot;</span>, <span class="st">&quot;_2&quot;</span>), <span class="at">fuzzy_settings =</span> <span class="fu">build_fuzzy_settings</span>(<span class="at">maxDist =</span> .<span class="dv">5</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result1<span class="sc">$</span>matches)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id1 id2 name_1 name_2 tier</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:   1   1    abc    abd  all</span></span></code></pre></div>
+<p>We only get 1 observation, because in the case of ties, <code>fuzzy_match</code> will simply pick the first observation.</p>
+</div>
 <div id="an-example---weighted-jaccard-match" class="section level2">
 <h2>An example - weighted Jaccard match</h2>
 <div id="weighted-jaccard-match" class="section level3">
 <h3>Weighted Jaccard Match</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>wgt_jaccard_match <span class="ot">&lt;-</span> <span class="fu">merge_plus</span>(<span class="at">data1 =</span> corp_data1, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data2 =</span> corp_data2,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by.x =</span> <span class="st">&quot;Company&quot;</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by.y =</span> <span class="st">&quot;Name&quot;</span>, <span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fuzzy_settings =</span> <span class="fu">build_fuzzy_settings</span>(<span class="at">method =</span> <span class="st">&quot;wgt_jaccard&quot;</span>, <span class="at">nthread =</span> <span class="dv">2</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                                                <span class="at">maxDist =</span> .<span class="dv">5</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">unique_key_1 =</span> <span class="st">&quot;unique_key_1&quot;</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">unique_key_2 =</span> <span class="st">&quot;unique_key_2&quot;</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(wgt_jaccard_match)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $matches</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    unique_key_2 unique_key_1 Country State  SIC Revenue            Company</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            1            1     USA    OH 3300     485            Walmart</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:            4            4     USA    TX 2222     205       Exxon Mobile</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:            6            6     USA    MA   NA     184 UnitedHealth Group</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:           10           10     USA    MI   NA     151 Ford Motor Company</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  Name wgt_jaccard_sim country state_code SIC_code earnings tier</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            Walmart       1.0000000     USA         OH     3380  490,000  all</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2: Exxon Mobile Inc.        0.6173197     USA         TX     2222  210,000  all</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3: UnitedHealth Group       1.0000000     USA         MA     1130  180,000  all</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:         Ford Motor       0.6173197     USA         MI     2222  150,000  all</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $matches_filter</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Null data.table (0 rows and 0 cols)</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $data1_nomatch</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Company Country State  SIC Revenue unique_key_1</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: Bershire Hataway     USA       2222     223            2</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:            Apple     USA    CA 3384     215            3</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:        McKesson  Germany    MA  222     192            5</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:       CVS Health     USA    RI 1112     177            7</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:   General Motors     USA    MI 2222     166            8</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6:             AT&amp;T     USA    TN 4000     163            9</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $data2_nomatch</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 Name country state_code SIC_code earnings unique_key_2</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: Bershire Hathaway     USA         NE     2220  220,000            2</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:    Apple Computer     USA         CA       NA  220,000            3</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:    McKesson Corp.                 MA     2222  190,000            5</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:               CVS                 RI     1122  180,000            7</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:                GM                 MI     2222  170,000            8</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6:            AT &amp; T     USA         TN     4000  160,000            9</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $match_evaluation</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    tier matches in_tier_unique_1 in_tier_unique_2 pct_matched_1 pct_matched_2</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  all       4                4                4           0.4           0.4</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    new_unique_1 new_unique_2</span></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            4            4</span></span></code></pre></div>
-<p>Note that we have an extra column, ‘wgt_jaccard_sim’, that shows the similarity score for the weighted Jaccard method.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>wgt_jaccard_match <span class="ot">&lt;-</span> <span class="fu">merge_plus</span>(<span class="at">data1 =</span> corp_data1, </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data2 =</span> corp_data2,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by.x =</span> <span class="st">&quot;Company&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by.y =</span> <span class="st">&quot;Name&quot;</span>, <span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fuzzy_settings =</span> <span class="fu">build_fuzzy_settings</span>(<span class="at">method =</span> <span class="st">&quot;wgt_jaccard&quot;</span>, <span class="at">nthread =</span> <span class="dv">2</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                                                <span class="at">maxDist =</span> .<span class="dv">5</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">unique_key_1 =</span> <span class="st">&quot;unique_key_1&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">unique_key_2 =</span> <span class="st">&quot;unique_key_2&quot;</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(wgt_jaccard_match)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $matches</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    unique_key_2 unique_key_1 Country State  SIC Revenue            Company</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            1            1     USA    OH 3300     485            Walmart</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:            4            4     USA    TX 2222     205       Exxon Mobile</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:            6            6     USA    MA   NA     184 UnitedHealth Group</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:           10           10     USA    MI   NA     151 Ford Motor Company</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  Name country state_code SIC_code earnings tier</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            Walmart     USA         OH     3380  490,000  all</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2: Exxon Mobile Inc.      USA         TX     2222  210,000  all</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3: UnitedHealth Group     USA         MA     1130  180,000  all</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:         Ford Motor     USA         MI     2222  150,000  all</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $matches_filter</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Null data.table (0 rows and 0 cols)</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $data1_nomatch</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Company Country State  SIC Revenue unique_key_1</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: Bershire Hataway     USA       2222     223            2</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:            Apple     USA    CA 3384     215            3</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:        McKesson  Germany    MA  222     192            5</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:       CVS Health     USA    RI 1112     177            7</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:   General Motors     USA    MI 2222     166            8</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6:             AT&amp;T     USA    TN 4000     163            9</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $data2_nomatch</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 Name country state_code SIC_code earnings unique_key_2</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: Bershire Hathaway     USA         NE     2220  220,000            2</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2:    Apple Computer     USA         CA       NA  220,000            3</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3:    McKesson Corp.                 MA     2222  190,000            5</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4:               CVS                 RI     1122  180,000            7</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5:                GM                 MI     2222  170,000            8</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6:            AT &amp; T     USA         TN     4000  160,000            9</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $match_evaluation</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    tier matches in_tier_unique_1 in_tier_unique_2 pct_matched_1 pct_matched_2</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  all       4                4                4           0.4           0.4</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    new_unique_1 new_unique_2</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:            4            4</span></span></code></pre></div>
 </div>
 </div>
 </div>

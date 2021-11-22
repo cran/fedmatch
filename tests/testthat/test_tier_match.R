@@ -152,12 +152,12 @@ test_that("sequential word dropping works", {
   tier_list <- list(
     a = list(match_type = "exact"),
     b = list(match_type = "fuzzy"),
-    c = list(match_type = "multivar", multivar_settings = list(
+    c = build_tier(match_type = "multivar", multivar_settings = list(
       logit = NULL, missing = FALSE, wgts = c(1),
       compare_type = "stringdist", blocks = NULL, blocks.x = NULL, blocks.y = NULL,
       top = 1, threshold = NULL
     )),
-    d = list(
+    d = build_tier(
       match_type = "exact", clean_settings = list(remove_words = TRUE),
       sequential_words = sequential_words_df
     )
@@ -265,4 +265,71 @@ test_that("dropping observations between tiers works", {
   result$matches
 
   expect_true(result$matches[tier == "b", .N] == 0)
+})
+test_that("fuzzy match works with different by's in tier_match", {
+  corp_data1 <- fedmatch::corp_data1
+  corp_data2 <- fedmatch::corp_data2
+  # rbind(corp_data2, data.table(Name = "Ford Motor Company", unique_key_2 = 11), fill = TRUE)
+  # corp_data1
+  # corp_data2
+  tier_list <- list(
+    a = list(
+      match_type = "fuzzy",
+      by.x = "name",
+      by.y = "name"
+    ),
+    a = list(
+      match_type = "fuzzy",
+      by.x = "name2",
+      by.y = "name"
+    )
+  )
+  corp_data1[, unique_k_1 := unique_key_1][, unique_key_1 := NULL]
+  corp_data2[, unique_k_2 := unique_key_2][, unique_key_2 := NULL]
+  corp_data1[, name := Company]
+  corp_data2[, name := Name]
+  corp_data1[, name2 := Company]
+  # corp_data1[, name := NULL]
+  corp_data1
+  result <- tier_match(corp_data1, corp_data2,
+                       unique_key_1 = "unique_k_1", unique_key_2 = "unique_k_2",
+                       tiers = tier_list, takeout = "neither",
+                       suffixes = c("_1", "_2"), verbose = T
+  )
+  expect_true(result$matches[tier == "a", .N] == 6)
+})
+test_that("cleaning on different tiers isn't preserved", {
+  corp_data1 <- fedmatch::corp_data1
+  corp_data2 <- fedmatch::corp_data2
+  # rbind(corp_data2, data.table(Name = "Ford Motor Company", unique_key_2 = 11), fill = TRUE)
+  # corp_data1
+  # corp_data2
+  tier_list <- list(
+    a = list(
+      match_type = "exact",
+      by.x = "name",
+      by.y = "name",
+      clean = T
+    ),
+    b = list(
+      match_type = "exact",
+      by.x = "name",
+      by.y = "name"
+    )
+  )
+  corp_data1[, unique_k_1 := unique_key_1][, unique_key_1 := NULL]
+  corp_data2[, unique_k_2 := unique_key_2][, unique_key_2 := NULL]
+  corp_data1[, name := Company]
+  corp_data2[, name := Name]
+  corp_data1[, name2 := Company]
+  # corp_data1[, name := NULL]
+  corp_data1
+  result <- tier_match(corp_data1, corp_data2,
+                       unique_key_1 = "unique_k_1", unique_key_2 = "unique_k_2",
+                       tiers = tier_list, takeout = "neither",
+                       suffixes = c("_1", "_2"), verbose = T
+  )
+  # make sure that the two names matched in each aren't the same, that is,
+  # the second tier isn't being cleaned.
+  expect_true(result$matches$name_1[[1]] != result$matches$name_1[[2]] )
 })
