@@ -68,7 +68,7 @@ Let's go through the arguments:
   - "difference" computes the numeric difference between the two columns, scaled by the largest difference in the dataset
   - "ratio" computes the ratio between the two columns, always such that the ratio is less than 1
   - "stringdist" computes the Jaro-Winkler string distance between the strings.
-  - "wgt_jaccard_distance" computes the weighted jaccard distance between the strings (see fuzzy matching vignette for details on how this is computed.)
+  - "wgt_jaccard_dist" computes the weighted jaccard distance between the strings (see fuzzy matching vignette for details on how this is computed.)
 - 'wgts' is a vector of weights, length equal to the length of the 'by' vector, that describes how to weight each field for computing a multivar_score. 
 - 'nthread' is how many threads to use when making the comparisons, see `parallel::makeCluster()`
 - 'logit' is a logit model (described in detail later) that can be used instead of 'wgts' to combine the comparison scores into a final multivar_score using `base::predict()`
@@ -153,7 +153,7 @@ result <- merge_plus(corp_data1_test, corp_data2_test,
 result
 ```
 
-Instead of using a weighted sum of comparison scores, we use `base::predict` to arrive at a multivar_score that can be interpreted as a match probability. A word of caution: the logit parameters can give very non-intuitive results for the resultant multivar_scores, because the [logit function](https://en.wikipedia.org/wiki/Logit) is of course non-linear. For example, in one project we were working on, there was a coefficient of 40 and a coefficient of 3. However, if the variable with the coefficient of '3' had a comparison score of 0, then the highest the multivar_score could be was only around 0.6! This was very unintuitive for us, and shows the complex nature of the logit model. 
+Instead of using a weighted sum of comparison scores, we use `base::predict` to arrive at a multivar_score that can be interpreted as a match probability. A word of caution: the logit parameters can give very non-intuitive results for the resultant multivar_scores, because the [logit function](https://en.wikipedia.org/wiki/Logit) is of course non-linear. For example, in one project we were working on, there was a coefficient of 40 and a coefficient of 3. However, if the variable with the coefficient of '3' had a comparison score of 0, then the highest the multivar_score could be was only around 0.6! This was very un-intuitive for us, and shows the complex nature of the logit model. 
 
 All that said, the logit model has the benefit of returning an easily-interpretable multivar_score: with a large enough (and clean enough) training set, the fitted multivar_score is simply the probability of a match. This is contrast to the multivar_scores returned by the linear combination: these numbers have no immediate meaning, and can vary dramatically for each project. In one project, a score of .6 might be very good, and in another, very bad. It is a good idea to try both the logit and linear methods and play around with each for your individual project.
 

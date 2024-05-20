@@ -1,3 +1,12 @@
+# fedmatch 2.0.6
+- Fixed documentation referencing "X" to be to the proper vignette
+- Fixed documentation referencing "wgt_jaccard_distance" that should be "wgt_jaccard_dist"
+- Fixed issue so that multivar_match warns when invalid compare_types are used
+- Fixed issue where wgt_jaccard_dist wasn't listed as a valid compare type
+- Fixed bug where 'difference' comparison method would assign wrong scores for negative numbers
+- Improved documentation around scoring for post-hoc matchscores
+
+
 # fedmatch 2.0.5
 - Fixed bug in `build_tier_settings` that didn't include `sequential_words` argument
 - Fixed bug where `clean_strings` wasn't removing the replacement words even if `remove_words == T`
@@ -27,7 +36,7 @@
 
 - Fixed bugs in Makevars so that C++ code runs in parallel
 - Fixed bugs in `tier_match` that stopped matches from being removed in between tiers
-- Fixed bugs preventing the successful build on other platforms besides native linux
+- Fixed bugs preventing the successful build on other platforms besides native Linux
 
 # fedmatch 2.0.0
 
