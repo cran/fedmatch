@@ -15,11 +15,11 @@ data.table::setDT(corp_data2)
 ## -----------------------------------------------------------------------------
 tier_list <- list(
   a = build_tier(match_type = "exact"),
-  b = build_tier(match_type = "fuzzy"),
+  b = build_tier(match_type = "fuzzy", fuzzy_settings = build_fuzzy_settings(nthread = 1)),
   c = build_tier(match_type = "multivar", multivar_settings = build_multivar_settings(
     logit = NULL, missing = FALSE, wgts = 1,
     compare_type = "stringdist", blocks = NULL, blocks.x = NULL, blocks.y = NULL,
-    top = 1, threshold = NULL
+    top = 1, threshold = NULL, nthread = 1
   ))
 
 )
@@ -37,7 +37,7 @@ tier_list_v2 <- list(
                  multivar_settings = build_multivar_settings(
     logit = NULL, missing = FALSE, wgts = 1,
     compare_type = "stringdist", blocks = NULL, blocks.x = NULL, blocks.y = NULL,
-    top = 1, threshold = NULL
+    top = 1, threshold = NULL, nthread = 1
   ))
 )
 

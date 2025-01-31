@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -436,22 +436,22 @@ rather than replacing them.</p>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt;  [3] &quot;pple&quot;                              &quot;exxapplen mapplebile&quot;             </span></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;m kessapplen&quot;                      &quot;unitedhe lth grappleup&quot;           </span></span>
 <span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;vs he lth&quot;                         &quot;gener l mappletapplers&quot;           </span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;t t&quot;                               &quot;fapplerd mappletappler applemp ny&quot;</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">clean_strings</span>(name_vec, <span class="at">common_words =</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">word =</span> <span class="fu">c</span>(<span class="st">&quot;general&quot;</span>, <span class="st">&quot;company&quot;</span>),</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>                                                              <span class="at">replacement =</span> <span class="fu">c</span>(<span class="st">&quot;bananas&quot;</span>, <span class="st">&quot;oranges&quot;</span>)),</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>              <span class="at">remove_words =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;walmart&quot;            &quot;bershire hataway&quot;   &quot;apple&quot;             </span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt;  [4] &quot;exxon mobile&quot;       &quot;mckesson&quot;           &quot;unitedhealth group&quot;</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;cvs health&quot;         &quot;motors&quot;             &quot;atandt&quot;            </span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; [10] &quot;ford motor&quot;</span></span></code></pre></div>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;t t&quot;                               &quot;fapplerd mappletappler applemp ny&quot;</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">clean_strings</span>(name_vec, <span class="at">common_words =</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">word =</span> <span class="fu">c</span>(<span class="st">&quot;general&quot;</span>, <span class="st">&quot;company&quot;</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>                                                              <span class="at">replacement =</span> <span class="fu">c</span>(<span class="st">&quot;bananas&quot;</span>, <span class="st">&quot;oranges&quot;</span>)),</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>              <span class="at">remove_words =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;walmart&quot;            &quot;bershire hataway&quot;   &quot;apple&quot;             </span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;  [4] &quot;exxon mobile&quot;       &quot;mckesson&quot;           &quot;unitedhealth group&quot;</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;cvs health&quot;         &quot;motors&quot;             &quot;atandt&quot;            </span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; [10] &quot;ford motor&quot;</span></span></code></pre></div>
 </div>
 <div id="stem" class="section level2">
 <h2>stem</h2>
 <p><code>stem</code> is a boolean that lets you stem words, using
 <code>SnowballC::wordStem</code>. ‘stemming’ words means removing common
 suffixes:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">clean_strings</span>(<span class="fu">c</span>( <span class="st">&quot;call&quot;</span>, <span class="st">&quot;calling&quot;</span>, <span class="st">&quot;called&quot;</span>), <span class="at">stem =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;call&quot; &quot;call&quot; &quot;call&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">clean_strings</span>(<span class="fu">c</span>( <span class="st">&quot;call&quot;</span>, <span class="st">&quot;calling&quot;</span>, <span class="st">&quot;called&quot;</span>), <span class="at">stem =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;call&quot; &quot;call&quot; &quot;call&quot;</span></span></code></pre></div>
 <p>See the documentation in <code>SnowballC::wordStem</code> for
 details.</p>
 </div>

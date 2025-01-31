@@ -49,7 +49,7 @@ print(basic_merge$match_evaluation)
 fuzzy_result <- merge_plus(data1 = corp_data1, 
                           data2 = corp_data2,
                           by.x = "Company",
-                          by.y = "Name", match_type = "fuzzy", 
+                          by.y = "Name", match_type = "fuzzy", fuzzy_settings = build_fuzzy_settings(nthread = 1),
                           unique_key_1 = "unique_key_1",
                           unique_key_2 = "unique_key_2")
 print(fuzzy_result$matches)

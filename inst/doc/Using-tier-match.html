@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -365,11 +365,11 @@ sequence, and each of the matches from each tier are saved and
 combined.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>tier_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">a =</span> <span class="fu">build_tier</span>(<span class="at">match_type =</span> <span class="st">&quot;exact&quot;</span>),</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">b =</span> <span class="fu">build_tier</span>(<span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">b =</span> <span class="fu">build_tier</span>(<span class="at">match_type =</span> <span class="st">&quot;fuzzy&quot;</span>, <span class="at">fuzzy_settings =</span> <span class="fu">build_fuzzy_settings</span>(<span class="at">nthread =</span> <span class="dv">1</span>)),</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">build_tier</span>(<span class="at">match_type =</span> <span class="st">&quot;multivar&quot;</span>, <span class="at">multivar_settings =</span> <span class="fu">build_multivar_settings</span>(</span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="at">logit =</span> <span class="cn">NULL</span>, <span class="at">missing =</span> <span class="cn">FALSE</span>, <span class="at">wgts =</span> <span class="dv">1</span>,</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="at">compare_type =</span> <span class="st">&quot;stringdist&quot;</span>, <span class="at">blocks =</span> <span class="cn">NULL</span>, <span class="at">blocks.x =</span> <span class="cn">NULL</span>, <span class="at">blocks.y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">top =</span> <span class="dv">1</span>, <span class="at">threshold =</span> <span class="cn">NULL</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">top =</span> <span class="dv">1</span>, <span class="at">threshold =</span> <span class="cn">NULL</span>, <span class="at">nthread =</span> <span class="dv">1</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  ))</span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>)</span>
@@ -389,7 +389,7 @@ tier has to be an argument for <code>merge_plus</code>.</p>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>                 <span class="at">multivar_settings =</span> <span class="fu">build_multivar_settings</span>(</span>
 <span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">logit =</span> <span class="cn">NULL</span>, <span class="at">missing =</span> <span class="cn">FALSE</span>, <span class="at">wgts =</span> <span class="dv">1</span>,</span>
 <span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    <span class="at">compare_type =</span> <span class="st">&quot;stringdist&quot;</span>, <span class="at">blocks =</span> <span class="cn">NULL</span>, <span class="at">blocks.x =</span> <span class="cn">NULL</span>, <span class="at">blocks.y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>    <span class="at">top =</span> <span class="dv">1</span>, <span class="at">threshold =</span> <span class="cn">NULL</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>    <span class="at">top =</span> <span class="dv">1</span>, <span class="at">threshold =</span> <span class="cn">NULL</span>, <span class="at">nthread =</span> <span class="dv">1</span></span>
 <span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  ))</span>
 <span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>)</span></code></pre></div>
 <p>Let’s take a look at the rest of the syntax for
